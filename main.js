@@ -10,14 +10,14 @@ var pw = readlineSync.question('What is your password?:\t', {hideEchoBack:true})
 
 console.log("Welcome " + userName);
 
-/* if possible, the i variable should be used first allowing small but still some runtime, if you can please prove me wrong */
+/* if possible, the i variable should be used first allowing small but still some runtime, if you can, please, prove me wrong */
 
 //Login to facebook with email and password, and return api object and possible errors
 login({email: userName, password:pw}, function callback(err,api){
-	//if errors in login in print them and stop the program
+	//if errors in login, print them and stop the program
 	if(err) return console.error(err);	
 
-	//The commandline input
+	//The commandline input variable
 	var i = readlineSync.question(">");
 
 	if (i == "help"){
