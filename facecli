@@ -11,7 +11,7 @@ var pw = readlineSync.question('What is your password?:\t', {hideEchoBack:true})
 
 console.log("Welcome " + userName);
 
-var firstCall = true;
+var firstLogin = true;
 
 /* if possible, the i variable should be used first allowing small but still some runtime, if you can, please, prove me wrong */
 
@@ -21,10 +21,10 @@ login({email: userName, password:pw}, function callback(err,api){
 	//if errors in login, print them and stop the program
 	if(err) return console.error(err);	
 
-	if(firstCall){
+	if(firstLogin){
 		//api = inapi;
 		console.log("Logged in with id: " + api.getCurrentUserID());
-		firstCall = false;
+		firstLogin = false;
 	}
 
 	//The commandline input variable
@@ -32,6 +32,9 @@ login({email: userName, password:pw}, function callback(err,api){
 
 	if (i == "help"){
 		console.log("The help command is not implemented, but the commands are:\nthreads\nmsg\nlist\n");
+	} else if (i == "exit" || i == "quit"){
+		console.log("Logging out " + userName);
+		api.logout();
 	} else if (i == "threads") {
 		//Ask user how many threads to get, should be able to input with flags
 		var i = readlineSync.question("How many pulls?: ");
@@ -48,7 +51,7 @@ login({email: userName, password:pw}, function callback(err,api){
 		var msg = readlineSync.question("Message: ");
 		api.sendMessage({body: msg}, i);
 	} else if(i=="list"){
-		 api.getFriendsList(function(err, data) {
+		 api.getFriendsList(function (err, data) {
 		    if(err) return console.error(err);
 
 		 for (i = 0; i != data.length; i++) {
@@ -67,5 +70,15 @@ login({email: userName, password:pw}, function callback(err,api){
 				console.log(data[v].timestampDatetime + ": " + data[v].senderName + " | " + data[v].body);
 			}
 		});
+	} else if(i=="bdays"){
+		 api.getFriendsList(function(err, data) {
+		    if(err) return console.error(err);
+
+		 for (i = 0; i != data.length; i++) {
+		 	if (data[i].isBirthday){
+		 		console.log("Friend " + data[i].fullName + " with id " + data.userID + " was born today");
+		 		var cont = readlineSync.question("Press enter to continue");
+		 	}
+		 }});
 	}
 });
