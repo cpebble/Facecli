@@ -30,55 +30,67 @@ login({email: userName, password:pw}, function callback(err,api){
 	//The commandline input variable
 	var i = readlineSync.question(">");
 
-	if (i == "help"){
-		console.log("The help command is not implemented, but the commands are:\nthreads\nmsg\nlist\n");
-	} else if (i == "exit" || i == "quit"){
-		console.log("Logging out " + userName);
-		api.logout();
-	} else if (i == "threads") {
-		//Ask user how many threads to get, should be able to input with flags
-		var i = readlineSync.question("How many pulls?: ");
-		api.getThreadList(0, i - 1, function callback(err, data){
-			if(err) return console.error(err);
+	switch (i) {
+		case "exit":
+			console.log("Logging out " + userName);
+			api.logout();
+			break;
+		case "help":
+			console.log("The help command is not implemented, but the commands are:\nthreads\nmsg\nlist\n");
+			break;
+		case "getchat":
+			var i = readlineSync.question("How many messages to retrive: ");
+			var id = readlineSync.question("What is the threadID: ");
+			api.getThreadHistory(id, 0, i, null, function callback(err, data){
+				if(err) return console.log(err);
+				// working example, console.log(data[1].body);
+				for (v = 0; v < i; v++){
+					console.log(data[v].timestampDatetime + ": " + data[v].senderName + " | " + data[v].body);
+				}
+			});
+			break;
+		case "threads":
+			//Ask user how many threads to get, should be able to input with flags
+			var i = readlineSync.question("How many pulls?: ");
+			api.getThreadList(0, i - 1, function callback(err, data){
+				if(err) return console.error(err);
 
-			for (i = 0; i != data.length; i++)
-			console.log("Thread " + data[i].name + ": \"" + data[i].snippet + "\" has id: " + data[i].threadID);
-		});
-	} else if(i=="msg") {
-		//Contains the thread identifyer
-		var i = readlineSync.question("What is the sender id?: ");
-		//Contains the message to be send
-		var msg = readlineSync.question("Message: ");
-		api.sendMessage({body: msg}, i);
-	} else if(i=="list"){
-		 api.getFriendsList(function (err, data) {
+				for (i = 0; i != data.length; i++)
+					console.log("Thread " + data[i].name + ": \"" + data[i].snippet + "\" has id: " + data[i].threadID);
+			});
+			break;
+		case "msg":
+			//Contains the thread identifyer
+			var i = readlineSync.question("What is the sender id?: ");
+			//Contains the message to be send
+			var msg = readlineSync.question("Message: ");
+			api.sendMessage({body: msg}, i);
+			break;
+		case "list":
+			api.getFriendsList(function (err, data) {
 		    if(err) return console.error(err);
 
-		 for (i = 0; i != data.length; i++) {
-		 	console.log("Friend " + data[i].fullName + " has id " + data.userID);
-		 	var cont = readlineSync.question("Press enter to continue");
-		 }});
-	} else if(i=="myid"){
-		console.log("Logged in with id: " + api.getCurrentUserID());
-	} else if(i="getchat"){
-		var i = readlineSync.question("How many messages to retrive: ");
-		var id = readlineSync.question("What is the threadID: ");
-		api.getThreadHistory(id, 0, i, null, function callback(err, data){
-			if(err) return console.log(err);
-			// working example, console.log(data[1].body);
-			for (v = 0; v < i; v++){
-				console.log(data[v].timestampDatetime + ": " + data[v].senderName + " | " + data[v].body);
-			}
-		});
-	} else if(i=="bdays"){
-		 api.getFriendsList(function(err, data) {
-		    if(err) return console.error(err);
-
-		 for (i = 0; i != data.length; i++) {
-		 	if (data[i].isBirthday){
-		 		console.log("Friend " + data[i].fullName + " with id " + data.userID + " was born today");
+		 	for (i = 0; i != data.length; i++) {
+		 		console.log("Friend " + data[i].fullName + " has id " + data.userID);
 		 		var cont = readlineSync.question("Press enter to continue");
+		 	}});
+			break;
+		case "myid":
+			console.log("Logged in with id: " + api.getCurrentUserID());
+			break;
+		case "bdays":
+			api.getFriendsList(function(err, data) {
+		    if(err) return console.error(err);
+
+			for (i = 0; i != data.length; i++) {
+		 		if (data[i].isBirthday){
+		 			console.log("Friend " + data[i].fullName + " with id " + data.userID + " was born today");
+		 			var cont = readlineSync.question("Press enter to continue");
 		 	}
 		 }});
+			break;
+		default:
+			// statements_def
+			break;
 	}
 });
