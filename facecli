@@ -9,8 +9,6 @@ var userName = readlineSync.question("What is your email?\t");
 //get the password in hidden text
 var pw = readlineSync.question('What is your password?:\t', {hideEchoBack:true});
 
-console.log("Welcome " + userName);
-
 var firstLogin = true;
 
 /* if possible, the i variable should be used first allowing small but still some runtime, if you can, please, prove me wrong */
@@ -19,18 +17,19 @@ var firstLogin = true;
 //var api;
 login({email: userName, password:pw}, function callback(err,api){
 	//if errors in login, print them and stop the program
-	if(err) return console.error(err);	
+	if(err) return console.error(err);
+	var err = null;
 
+	// Puts the login info the first time one logs in
 	if(firstLogin){
-		//api = inapi;
+		console.log("Welcome " + userName);
 		console.log("Logged in with id: " + api.getCurrentUserID());
 		firstLogin = false;
 	}
-
 	//The commandline input variable
-	var i = readlineSync.question(">");
+	var inp = readlineSync.question(">"); //input variable
 
-	switch (i) {
+	switch (inp) {
 		case "exit":
 			console.log("Logging out " + userName);
 			api.logout();
@@ -52,16 +51,17 @@ login({email: userName, password:pw}, function callback(err,api){
 		case "threads":
 			//Ask user how many threads to get, should be able to input with flags
 			var i = readlineSync.question("How many pulls?: ");
-			api.getThreadList(0, i - 1, function callback(err, data){
+			console.log("Pulling " + i + " threads");
+			api.getThreadList(0, i, function callback(err, data){
 				if(err) return console.error(err);
 
-				for (i = 0; i != data.length; i++)
+				for (i = 0; i < data.length; i++)
 					console.log("Thread " + data[i].name + ": \"" + data[i].snippet + "\" has id: " + data[i].threadID);
 			});
 			break;
 		case "msg":
 			//Contains the thread identifyer
-			var i = readlineSync.question("What is the sender id?: ");
+			var id = readlineSync.question("What is the sender id?: ");
 			//Contains the message to be send
 			var msg = readlineSync.question("Message: ");
 			api.sendMessage({body: msg}, i);
@@ -82,7 +82,7 @@ login({email: userName, password:pw}, function callback(err,api){
 			api.getFriendsList(function(err, data) {
 		    if(err) return console.error(err);
 
-			for (i = 0; i != data.length; i++) {
+			for (i = 0; i < data.length; i++) {
 		 		if (data[i].isBirthday){
 		 			console.log("Friend " + data[i].fullName + " with id " + data.userID + " was born today");
 		 			var cont = readlineSync.question("Press enter to continue");
