@@ -1,0 +1,9 @@
+{
+  "name": "Facecli",
+  "version": "1.0.1",
+  "license": "MIT",
+  "dependencies": {
+    "facebook-chat-api": "^1.1.0",
+    "readline-sync": "^1.4.1"
+  }
+}

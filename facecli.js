@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 //Christian Egon Sørensen, licensed under the MIT-license
 var readlineSync = require("readline-sync"); //For getting the user input in a discret way
 var login = require("facebook-chat-api"); //The actual module that through clever tricks allows facebook chat functions
